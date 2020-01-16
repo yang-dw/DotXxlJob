@@ -1,13 +1,17 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using com.xxl.job.core.biz.model;
+using com.xxl.job.core.rpc.codec;
 using DotXxlJob.Core.Config;
 using DotXxlJob.Core.Model;
-using Hessian;
+using hessiancsharp.io;
+using java.lang;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -56,37 +60,44 @@ namespace DotXxlJob.Core
 
         public Task<ReturnT> Callback(List<HandleCallbackParam> callbackParamList)
         {
-            return InvokeRpcService("callback", new List<object> { new JavaClass { Name = Constants.JavaListFulName } }, callbackParamList);
+            return InvokeRpcService("callback", new ArrayList { new Class { name = Constants.JavaListFulName } }, callbackParamList);
         }
 
         public Task<ReturnT> Registry(RegistryParam registryParam)
         {
-            return InvokeRpcService("registry", new List<object> { new JavaClass { Name = "com.xxl.job.core.biz.model.RegistryParam" } }, registryParam, true);
+            return InvokeRpcService("registry", new ArrayList { new Class { name = "com.xxl.job.core.biz.model.RegistryParam" } }, registryParam, true);
         }
 
         public Task<ReturnT> RegistryRemove(RegistryParam registryParam)
         {
-            return InvokeRpcService("registryRemove", new List<object> { new JavaClass { Name = "com.xxl.job.core.biz.model.RegistryParam" } }, registryParam, true);
+            return InvokeRpcService("registryRemove", new ArrayList { new Class { name = "com.xxl.job.core.biz.model.RegistryParam" } }, registryParam, true);
         }
 
-        private async Task<ReturnT> InvokeRpcService(string methodName, List<object> parameterTypes,
+        private async Task<ReturnT> InvokeRpcService(string methodName, ArrayList parameterTypes,
             object parameters, bool polling = false)
         {
             var request = new RpcRequest {
-                RequestId = Guid.NewGuid().ToString("N"),
-                CreateMillisTime = DateTime.Now.GetTotalMilliseconds(),
-                AccessToken = _options.AccessToken,
-                ClassName = "com.xxl.job.core.biz.AdminBiz",
-                MethodName = methodName,
-                ParameterTypes = parameterTypes,
-                Parameters = new List<object> { parameters }
+                requestId = Guid.NewGuid().ToString("N"),
+                createMillisTime = DateTime.Now.GetTotalMilliseconds(),
+                accessToken = _options.AccessToken,
+                className = "com.xxl.job.core.biz.AdminBiz",
+                methodName = methodName,
+                parameterTypes = parameterTypes,
+                parameters = new ArrayList { parameters }
             };
-            byte[] postBuf;
+            byte[] postBuf=null;
             using (var stream = new MemoryStream())
             {
                 HessianSerializer.SerializeRequest(stream, request);
 
-                postBuf = stream.ToArray();
+                try
+                {
+                    postBuf = stream.ToArray();
+                }
+                catch 
+                { 
+                
+                }
             }
 
             var triedTimes = 0;
@@ -138,9 +149,9 @@ namespace DotXxlJob.Core
                     }
                     else if (res.IsError)
                     {
-                        retList.Add(ReturnT.Failed(res.ErrorMsg));
+                        retList.Add(ReturnT.Failed(res.error));
                     }
-                    else if (res.Result is ReturnT ret)
+                    else if (res.result is ReturnT ret)
                     {
                         retList.Add(ret);
                     }
@@ -162,7 +173,18 @@ namespace DotXxlJob.Core
             }
             throw new Exception("xxl-rpc server address not accessible.");
         }
-
+        private CHessianInput GetHessianInput(string content)
+        {
+            var buffer = new byte[content.Length / 2];
+            for (int i = 0; i < content.Length; i += 2)
+            {
+                buffer[i / 2] = Convert.ToByte(content.Substring(i, 2), 16);
+            }
+             
+            var stream = new MemoryStream(buffer);
+            CHessianInput input = new CHessianInput(stream);
+            return input;
+        }
         private async Task<Stream> DoPost(HttpClient client, AddressEntry address, byte[] postBuf)
         {
             var content = new ByteArrayContent(postBuf);

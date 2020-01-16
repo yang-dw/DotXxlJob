@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using com.xxl.job.core.biz.model;
 using DotXxlJob.Core.Config;
 using DotXxlJob.Core.Model;
 using Microsoft.Extensions.Logging;
@@ -109,7 +110,7 @@ namespace DotXxlJob.Core.Queue
         {
             foreach (var param in list)
             {
-                _jobLogger.LogSpecialFile(param.LogDateTime, param.LogId, result.Msg??"Success");
+                _jobLogger.LogSpecialFile(param.logDateTim, param.logId, result.msg??"Success");
             }
         }
 

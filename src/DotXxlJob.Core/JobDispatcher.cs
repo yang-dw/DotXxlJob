@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using com.xxl.job.core.biz.model;
 using DotXxlJob.Core.Model;
 using DotXxlJob.Core.Queue;
 using Microsoft.Extensions.Logging;
@@ -62,14 +63,14 @@ namespace DotXxlJob.Core
         public ReturnT Execute(TriggerParam triggerParam)
         {
 
-            var executor = this._executorFactory.GetTaskExecutor(triggerParam.GlueType);
+            var executor = this._executorFactory.GetTaskExecutor(triggerParam.glueType);
             if (executor == null)
             {
-                return ReturnT.Failed($"glueType[{triggerParam.GlueType}] is not supported ");
+                return ReturnT.Failed($"glueType[{triggerParam.glueType}] is not supported ");
             }
             
             // 1. 根据JobId 获取 TaskQueue; 用于判断是否有正在执行的任务
-            if (RUNNING_QUEUE.TryGetValue(triggerParam.JobId, out var taskQueue))
+            if (RUNNING_QUEUE.TryGetValue(triggerParam.jobId, out var taskQueue))
             {
                 if (taskQueue.Executor != executor) //任务执行器变更
                 {
@@ -80,12 +81,12 @@ namespace DotXxlJob.Core
             if (taskQueue != null) //旧任务还在执行，判断执行策略
             {
                 //丢弃后续的
-                if (Constants.ExecutorBlockStrategy.DISCARD_LATER == triggerParam.ExecutorBlockStrategy)
+                if (Constants.ExecutorBlockStrategy.DISCARD_LATER == triggerParam.executorBlockStrategy)
                 {
-                     return ReturnT.Failed($"block strategy effect：{triggerParam.ExecutorBlockStrategy}");
+                     return ReturnT.Failed($"block strategy effect：{triggerParam.executorBlockStrategy}");
                 }
                 //覆盖较早的
-                if (Constants.ExecutorBlockStrategy.COVER_EARLY == triggerParam.ExecutorBlockStrategy)
+                if (Constants.ExecutorBlockStrategy.COVER_EARLY == triggerParam.executorBlockStrategy)
                 {
                     return taskQueue.Replace(triggerParam);
                 }
@@ -116,7 +117,7 @@ namespace DotXxlJob.Core
         private ReturnT PushJobQueue(TriggerParam triggerParam, ITaskExecutor executor)
         { 
             
-            if (RUNNING_QUEUE.TryGetValue(triggerParam.JobId,out var jobQueue))
+            if (RUNNING_QUEUE.TryGetValue(triggerParam.jobId,out var jobQueue))
             {
                 return jobQueue.Push(triggerParam);
             }
@@ -124,7 +125,7 @@ namespace DotXxlJob.Core
             //NewJobId
             jobQueue = new JobTaskQueue ( executor,this._jobLogger, this._jobQueueLogger);
             jobQueue.CallBack += TriggerCallback;
-            if (RUNNING_QUEUE.TryAdd(triggerParam.JobId, jobQueue))
+            if (RUNNING_QUEUE.TryAdd(triggerParam.jobId, jobQueue))
             {
                 return jobQueue.Push(triggerParam);
             }
@@ -134,7 +135,7 @@ namespace DotXxlJob.Core
         private ReturnT ChangeJobQueue(TriggerParam triggerParam, ITaskExecutor executor)
         {
            
-            if (RUNNING_QUEUE.TryRemove(triggerParam.JobId, out var oldJobTask))
+            if (RUNNING_QUEUE.TryRemove(triggerParam.jobId, out var oldJobTask))
             { 
                 oldJobTask.CallBack -= TriggerCallback;
                 oldJobTask.Dispose(); //释放原来的资源
@@ -142,7 +143,7 @@ namespace DotXxlJob.Core
             
             JobTaskQueue jobQueue = new JobTaskQueue ( executor,this._jobLogger, this._jobQueueLogger);
             jobQueue.CallBack += TriggerCallback;
-            if (RUNNING_QUEUE.TryAdd(triggerParam.JobId, jobQueue))
+            if (RUNNING_QUEUE.TryAdd(triggerParam.jobId, jobQueue))
             {
                 return jobQueue.Push(triggerParam);
             }

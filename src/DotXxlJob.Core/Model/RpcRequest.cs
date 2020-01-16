@@ -1,50 +1,21 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace DotXxlJob.Core.Model
+namespace com.xxl.job.core.rpc.codec
 {
-    [DataContract(Name = Constants.RpcRequestJavaFullName)]
     public class RpcRequest
     {
-        /*
-        requestId
-            createMillisTime
-        accessToken
-            className
-        methodName
-            version
-        parameterTypes
-            parameters
-        */
-        [DataMember(Name = "requestId",Order = 1)]
-        public string RequestId { get; set; }
-        
-        //[DataMember(Name = "serverAddress")]
-        //public string ServerAddress{ get; set; }
-        
-        [DataMember(Name = "createMillisTime" ,Order = 2)]
-        public long CreateMillisTime{ get; set; }
-        
-        
-        [DataMember(Name = "accessToken" ,Order = 3)]
-        public string AccessToken{ get; set; }
-        
-        [DataMember(Name = "className" ,Order = 4)]
-        public string ClassName{ get; set; }
-        
-        [DataMember(Name = "methodName" ,Order = 5)]
-        public string MethodName{ get; set; }
-        
-        [DataMember(Name = "version" ,Order = 6)]
-        public string Version{ get; set; }
-        
-        [DataMember(Name = "parameterTypes",Order = 7)]
-        public IList<object> ParameterTypes{ get; set; }
-        
-        
-        [DataMember(Name = "parameters",Order = 8)]
-        public IList<object> Parameters{ get; set; }
-        
-       
+        public string requestId;
+        public string serverAddress;
+        public long createMillisTime;
+        public string accessToken;
+
+        public string className;
+        public string methodName;
+        public ArrayList parameterTypes;
+        public ArrayList parameters;
+
+        public string version;
     }
 }

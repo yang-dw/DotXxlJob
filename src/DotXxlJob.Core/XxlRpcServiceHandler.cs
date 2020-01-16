@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Hessian;
+using com.xxl.job.core.biz.model;
+using com.xxl.job.core.rpc.codec;
 using DotXxlJob.Core.Config;
 using DotXxlJob.Core.Model;
 using Microsoft.Extensions.Logging;
@@ -54,20 +55,20 @@ namespace DotXxlJob.Core
         {
             var req = HessianSerializer.DeserializeRequest(reqStream);
             
-            var res = new RpcResponse { RequestId = req.RequestId};
+            var res = new RpcResponse { requestId = req.requestId};
             
             if (!ValidRequest(req, out var error))
             {
                 this._logger.LogWarning("job task request is not valid:{error}",error);
-                res.ErrorMsg = error;
+                res.error = error;
             }
             else
             {
                 this._logger.LogDebug("receive job task ,req.RequestId={requestId},method={methodName}"
-                    ,req.RequestId,req.MethodName);
+                    ,req.requestId,req.methodName);
                 await Invoke(req, res);
                 this._logger.LogDebug("completed receive job task ,req.RequestId={requestId},method={methodName},IsError={IsError}"
-                    ,req.RequestId,req.MethodName,res.IsError);
+                    ,req.requestId,req.methodName,res.IsError);
             }
           
             using (var outputStream = new MemoryStream())
@@ -93,19 +94,19 @@ namespace DotXxlJob.Core
                 return false;
             }
             
-            if (!"com.xxl.job.core.biz.ExecutorBiz".Equals(req.ClassName)) //
+            if (!"com.xxl.job.core.biz.ExecutorBiz".Equals(req.className)) //
             {
                 error =  "not supported request!";
                 return false;
             }
              
-            if (DateTime.UtcNow.Subtract(req.CreateMillisTime.FromMilliseconds()) > Constants.RpcRequestExpireTimeSpan)
+            if (DateTime.UtcNow.Subtract(req.createMillisTime.FromMilliseconds()) > Constants.RpcRequestExpireTimeSpan)
             {
                 error =  "request is timeout!";
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(this._options.AccessToken) && this._options.AccessToken !=  req.AccessToken)
+            if (!string.IsNullOrEmpty(this._options.AccessToken) && this._options.AccessToken !=  req.accessToken)
             {
                 error = "need authorize";
                 return false;
@@ -124,23 +125,23 @@ namespace DotXxlJob.Core
         {
             try
             {
-                var method = GetMethodInfo(req.MethodName);
+                var method = GetMethodInfo(req.methodName);
                 if (method == null)
                 {
-                    res.ErrorMsg = $"The method{req.MethodName} is not defined.";
-                    this._logger.LogWarning( $"The method{req.MethodName} is not defined.");
+                    res.error = $"The method{req.methodName} is not defined.";
+                    this._logger.LogWarning( $"The method{req.methodName} is not defined.");
                 }
                 else
                 {
-                    var result = method.Invoke(this, req.Parameters.ToArray());
+                    var result = method.Invoke(this, req.parameters.ToArray());
                     
-                    res.Result = result;
+                    res.result = result;
                 }
                
             }
             catch (Exception ex)
             {
-                res.ErrorMsg = ex.Message +"\n--------------\n"+ ex.StackTrace;
+                res.error = ex.Message +"\n--------------\n"+ ex.StackTrace;
                 this._logger.LogError(ex,"invoke method error:{0}",ex.Message);
             }
 
@@ -196,7 +197,7 @@ namespace DotXxlJob.Core
         private ReturnT Log(long logDateTime, int logId, int fromLineNum)
         {
             var ret =  ReturnT.Success(null);
-            ret.Content = this._jobLogger.ReadLog(logDateTime, logId, fromLineNum);
+            ret.content = this._jobLogger.ReadLog(logDateTime, logId, fromLineNum);
             return ret;
         }
 

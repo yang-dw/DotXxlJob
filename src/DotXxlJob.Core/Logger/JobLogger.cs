@@ -4,9 +4,10 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using com.xxl.job.core.biz.model;
 using DotXxlJob.Core.Config;
 using DotXxlJob.Core.Model;
-using Hessian;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

@@ -18,7 +18,7 @@ namespace ASPNetCoreExecutor
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+            WebHost.CreateDefaultBuilder(args).UseUrls("http://*:5000")
                 .ConfigureLogging((ctx, builder) =>
                 {
                     builder.AddConfiguration(ctx.Configuration);

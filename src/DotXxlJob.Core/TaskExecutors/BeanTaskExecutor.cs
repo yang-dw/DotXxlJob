@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using com.xxl.job.core.biz.model;
 using DotXxlJob.Core.Model;
 
 namespace DotXxlJob.Core.TaskExecutors
@@ -21,13 +22,13 @@ namespace DotXxlJob.Core.TaskExecutors
         
         public Task<ReturnT> Execute(TriggerParam triggerParam)
         {
-            var handler = _handlerFactory.GetJobHandler(triggerParam.ExecutorHandler);
+            var handler = _handlerFactory.GetJobHandler(triggerParam.executorHandler);
 
             if (handler == null)
             {
-               return Task.FromResult(ReturnT.Failed($"job handler [{triggerParam.ExecutorHandler} not found."));
+               return Task.FromResult(ReturnT.Failed($"job handler [{triggerParam.executorHandler} not found."));
             }
-            var context = new JobExecuteContext(this._jobLogger, triggerParam.ExecutorParams);
+            var context = new JobExecuteContext(this._jobLogger, triggerParam.executorParams);
             return handler.Execute(context);
         }
     }

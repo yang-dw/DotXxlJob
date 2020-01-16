@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using com.xxl.job.core.biz.model;
 using DotXxlJob.Core.Model;
 using Microsoft.Extensions.Logging;
 
@@ -49,13 +50,13 @@ namespace DotXxlJob.Core
 
        public ReturnT Push(TriggerParam triggerParam)
        {
-           if(!ID_IN_QUEUE.TryAdd(triggerParam.LogId,0))
+           if(!ID_IN_QUEUE.TryAdd(triggerParam.logId,0))
            {
-               _logger.LogWarning("repeat job task,logId={logId},jobId={jobId}",triggerParam.LogId,triggerParam.JobId);
+               _logger.LogWarning("repeat job task,logId={logId},jobId={jobId}",triggerParam.logId,triggerParam.jobId);
                return ReturnT.Failed("repeat job task!");
            }
 
-           //this._logger.LogWarning("add job with logId={logId},jobId={jobId}",triggerParam.LogId,triggerParam.JobId);
+           //this._logger.LogWarning("add job with logId={logId},jobId={jobId}",triggerParam.logId,triggerParam.jobId);
 
            this.TASK_QUEUE.Enqueue(triggerParam);
            StartTask();
@@ -111,19 +112,19 @@ namespace DotXxlJob.Core
                       
                        if (TASK_QUEUE.TryDequeue(out triggerParam))
                        {
-                           if (!ID_IN_QUEUE.TryRemove(triggerParam.LogId,out _))
+                           if (!ID_IN_QUEUE.TryRemove(triggerParam.logId,out _))
                            {
                                _logger.LogWarning("remove queue failed,logId={logId},jobId={jobId},exists={exists}"
-                                   ,triggerParam.LogId,triggerParam.JobId,ID_IN_QUEUE.ContainsKey(triggerParam.LogId));
+                                   ,triggerParam.logId,triggerParam.jobId,ID_IN_QUEUE.ContainsKey(triggerParam.logId));
                            }
                            //set log file;
-                           _jobLogger.SetLogFile(triggerParam.LogDateTime,triggerParam.LogId);
+                           _jobLogger.SetLogFile(triggerParam.logDateTim,triggerParam.logId);
                            
-                           _jobLogger.Log("<br>----------- xxl-job job execute start -----------<br>----------- Param:{0}" ,triggerParam.ExecutorParams);
+                           _jobLogger.Log("<br>----------- xxl-job job execute start -----------<br>----------- Param:{0}" ,triggerParam.executorParams);
                            
                            result = await Executor.Execute(triggerParam);
                            
-                           _jobLogger.Log("<br>----------- xxl-job job execute end(finish) -----------<br>----------- ReturnT:" + result.Code);
+                           _jobLogger.Log("<br>----------- xxl-job job execute end(finish) -----------<br>----------- ReturnT:" + result.code);
                        }
                        else
                        {

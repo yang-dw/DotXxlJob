@@ -1,45 +1,39 @@
+using System;
 using System.Runtime.Serialization;
 
-namespace DotXxlJob.Core.Model
+namespace com.xxl.job.core.biz.model
 {
-    
-    [DataContract(Name = Constants.TriggerParamJavaFullName)]
+
     public class TriggerParam
     {
-        //static readonly long SerialVersionUID = 42L;
+        public int jobId;
 
-        [DataMember(Name = "jobId",Order = 1)]
-        public int JobId { get; set; }
+        public string executorHandler;
 
-        [DataMember(Name = "executorHandler",Order = 2)]
-        public string ExecutorHandler { get; set; }
-        [DataMember(Name = "executorParams",Order = 3)]
-        public string ExecutorParams{ get; set; }
-        
-        [DataMember(Name = "executorBlockStrategy",Order = 4)]
-        public string ExecutorBlockStrategy{ get; set; }
-        
-        [DataMember(Name = "executorTimeout",Order = 5)]
-        public int ExecutorTimeout{ get; set; }
-        
-        [DataMember(Name = "logId",Order = 5)]
-        public int LogId{ get; set; }
-        [DataMember(Name = "logDateTim",Order = 6)]
-        public long LogDateTime{ get; set; }
-        
+        public string executorParams;
 
-        [DataMember(Name = "glueType",Order = 7)]
-        public string GlueType{ get; set; }
-        
-        [DataMember(Name = "glueSource",Order = 8)]
-        public string GlueSource{ get; set; }
-        
-        [DataMember(Name = "glueUpdatetime",Order = 9)]
-        public long GlueUpdateTime{ get; set; }
+        public string executorBlockStrategy;
 
-        [DataMember(Name = "broadcastIndex",Order = 10)]
-        public int BroadcastIndex{ get; set; }
-        [DataMember(Name = "broadcastTotal",Order = 11)]
-        public int BroadcastTotal{ get; set; }
+        public int executorTimeout;
+
+        public int logId;
+
+        public long logDateTim;
+
+        public string glueType;
+
+        public string glueSource;
+
+        public long glueUpdatetime;
+
+        public int broadcastIndex;
+
+        public int broadcastTotal;
+
+        public DateTime LogDataTime {
+            get {
+                return DateTimeExtensions.FromMillis(logDateTim);
+            }
+        }
     }
 }

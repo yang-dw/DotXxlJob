@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using com.xxl.job.core.biz.model;
 using DotXxlJob.Core.Json;
 using DotXxlJob.Core.Model;
 using Microsoft.Extensions.Logging;
@@ -110,7 +111,7 @@ namespace DotXxlJob.Core.Queue
                     {
                         if (item.CallbackRetryTimes >= Constants.MaxCallbackRetryTimes)
                         {
-                            this._logger.LogInformation("callback too many times and will be abandon,logId {logId}", item.LogId);
+                            this._logger.LogInformation("callback too many times and will be abandon,logId {logId}", item.logId);
                         }
                         else
                         {

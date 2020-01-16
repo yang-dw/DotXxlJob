@@ -4,7 +4,7 @@ namespace DotXxlJob.Core
 {
     internal static class Constants
     {
-        public const string RpcRequestJavaFullName = "com.xxl.rpc.remoting.net.params.XxlRpcRequest";
+        public const string RpcRequestJavaFullName = "com.xxl.job.core.rpc.codec.RpcRequest";
         public const string RpcResponseJavaFullName = "com.xxl.rpc.remoting.net.params.XxlRpcResponse";
         
         public const string RegistryParamJavaFullName = "com.xxl.job.core.biz.model.RegistryParam";

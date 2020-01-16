@@ -1,4 +1,5 @@
 using System;
+using com.xxl.job.core.biz.model;
 using DotXxlJob.Core.Model;
 
 namespace DotXxlJob.Core

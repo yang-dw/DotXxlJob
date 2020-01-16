@@ -1,8 +1,7 @@
 using System.Runtime.Serialization;
 
-namespace DotXxlJob.Core
-{
-    [DataContract(Name = Constants.ReturnTJavaFullName)]
+namespace com.xxl.job.core.biz.model
+{ 
     public class ReturnT
     {
         public const int SUCCESS_CODE = 200;
@@ -16,18 +15,15 @@ namespace DotXxlJob.Core
 
         public ReturnT(int code, string msg)
         {
-            Code = code;
-            Msg = msg;
+            this.code = code;
+            this.msg = msg;
         }
-        
-        
-        [DataMember(Name = "code",Order = 1)]
-        public  int Code { get; set; }
-        [DataMember(Name = "msg",Order = 2)]
-        public string Msg { get; set; }
-        
-        [DataMember(Name = "content",Order = 3)]
-        public object Content { get; set; }
+
+
+        public int code;
+        public string msg;
+
+        public object content;
         
       
 

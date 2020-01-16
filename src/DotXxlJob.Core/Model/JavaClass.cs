@@ -1,11 +1,16 @@
 using System.Runtime.Serialization;
 
-namespace DotXxlJob.Core.Model
+namespace java.lang
 {
-    [DataContract(Name = Constants.JavaClassFulName)]
-    public class JavaClass
+    public class Class
     {
-        [DataMember(Name = "name",Order = 1)]
-        public string Name { get; set; }
+        public Class() { }
+
+        public Class(string name)
+        {
+            this.name = name;
+        }
+
+        public string name;
     }
 }

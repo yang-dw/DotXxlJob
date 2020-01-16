@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using com.xxl.job.core.biz.model;
 using DotXxlJob.Core.Config;
 using DotXxlJob.Core.Model;
 using Microsoft.Extensions.Logging;
@@ -33,9 +34,9 @@ namespace DotXxlJob.Core
         public async Task RegistryAsync(CancellationToken cancellationToken)
         {
             var registryParam = new RegistryParam {
-                RegistryGroup = "EXECUTOR",
-                RegistryKey = _options.AppName,
-                RegistryValue = $"{_options.SpecialBindAddress}:{_options.Port}"
+                registryGroup = "EXECUTOR",
+                registryKey = _options.AppName,
+                registryValue = $"{_options.SpecialBindAddress}:{_options.Port}"
             };
 
             _logger.LogInformation(">>>>>>>> start registry to admin <<<<<<<<");
@@ -47,7 +48,7 @@ namespace DotXxlJob.Core
                 try
                 {
                     var ret = await _adminClient.Registry(registryParam);
-                    _logger.LogDebug("registry last result:{0}", ret?.Code);
+                    _logger.LogDebug("registry last result:{0}", ret?.code);
                     errorTimes = 0;
                     await Task.Delay(Constants.RegistryInterval, cancellationToken);
                 }
@@ -68,7 +69,7 @@ namespace DotXxlJob.Core
             _logger.LogInformation(">>>>>>>> start remove registry to admin <<<<<<<<");
 
             var removeRet = await this._adminClient.RegistryRemove(registryParam);
-            _logger.LogInformation("remove registry last result:{0}", removeRet?.Code);
+            _logger.LogInformation("remove registry last result:{0}", removeRet?.code);
             _logger.LogInformation(">>>>>>>> end remove registry to admin <<<<<<<<");
         }
     }

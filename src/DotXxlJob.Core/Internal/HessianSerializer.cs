@@ -1,7 +1,8 @@
 using System;
 using System.IO;
+using com.xxl.job.core.rpc.codec;
 using DotXxlJob.Core.Model;
-using Hessian;
+using hessiancsharp.io;
 
 namespace DotXxlJob.Core
 {
@@ -13,14 +14,10 @@ namespace DotXxlJob.Core
             RpcRequest request = null;
 
             try
-            {
-                var deserializer = new Deserializer(stream);
-                var classDef = deserializer.ReadValue() as ClassDef; 
-                if (!Constants.RpcRequestJavaFullName.Equals(classDef.Name))
-                {
-                    throw  new HessianException($"unknown class :{classDef.Name}");
-                }
-                request = HessianObjectHelper.GetRealObjectValue(deserializer,deserializer.ReadValue()) as RpcRequest;
+            { 
+                CHessianInput input = new CHessianInput(stream);
+                request = (RpcRequest)input.ReadObject();
+                return request;
             }
             catch (EndOfStreamException)
             {
@@ -33,14 +30,14 @@ namespace DotXxlJob.Core
         
         public static void SerializeRequest(Stream stream,RpcRequest req)
         {
-            var serializer = new Serializer(stream);
-            serializer.WriteObject(req);
+            CHessianOutput output = new CHessianOutput(stream);
+            output.WriteObject(req);
         }
         
         public static void SerializeResponse(Stream stream,RpcResponse res)
         {
-            var serializer = new Serializer(stream);
-            serializer.WriteObject(res);
+            CHessianOutput output = new CHessianOutput(stream);
+            output.WriteObject(res);
         }
         
   
@@ -50,14 +47,10 @@ namespace DotXxlJob.Core
 
             try
             {
-                var deserializer = new Deserializer(resStream);
-                var classDef = deserializer.ReadValue() as ClassDef;
-                if (!Constants.RpcResponseJavaFullName.Equals(classDef.Name))
-                {
-                    throw new HessianException($"unknown class :{classDef.Name}");
-                }
+                CHessianInput input = new CHessianInput(resStream);
+                rsp = (RpcResponse)input.ReadObject();
 
-                rsp = HessianObjectHelper.GetRealObjectValue(deserializer,deserializer.ReadValue()) as RpcResponse;
+                return rsp;
 
             }
             catch (EndOfStreamException)

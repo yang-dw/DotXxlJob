@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using DotXxlJob.Core;
 using DotXxlJob.Core.Model;
-using Hessian;
+
 using Newtonsoft.Json;
 
 namespace HessianReader

@@ -1,8 +1,9 @@
 using System.Runtime.Serialization;
+using com.xxl.job.core.biz.model;
 
-namespace DotXxlJob.Core.Model
+namespace com.xxl.job.core.biz.model
 {
-    [DataContract(Name = Constants.HandleCallbackParamJavaFullName)]
+    
     public class HandleCallbackParam
     {
         public HandleCallbackParam()
@@ -11,19 +12,16 @@ namespace DotXxlJob.Core.Model
         }
         public HandleCallbackParam(TriggerParam triggerParam, ReturnT result)
         {
-            this.LogId = triggerParam.LogId;
-            this.LogDateTime = triggerParam.LogDateTime;
-            this.ExecuteResult = result;
+            this.logId = triggerParam.logId;
+            this.logDateTim = triggerParam.logDateTim;
+            this.executeResult = result;
         }
         
        
         public int CallbackRetryTimes { get; set; }
-        
-        [DataMember(Name = "logId",Order = 1)]
-        public int LogId { get; set; }
-        [DataMember(Name = "logDateTim",Order = 2)]
-        public long LogDateTime { get; set; }
-        [DataMember(Name = "executeResult",Order = 3)]
-        public ReturnT ExecuteResult { get; set; }
+         
+        public int logId; 
+        public long logDateTim; 
+        public ReturnT executeResult;
     }
 }
