@@ -4,7 +4,7 @@ namespace com.xxl.job.core.biz.model
 { 
     public class RegistryParam
     { 
-        public string registryGroup;
+        public string registGroup;
 
         public string registryKey;
 

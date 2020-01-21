@@ -17,13 +17,16 @@ namespace ASPNetCoreExecutor
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args).UseUrls("http://*:5000")
-                .ConfigureLogging((ctx, builder) =>
-                {
-                    builder.AddConfiguration(ctx.Configuration);
-                    builder.AddConsole();
-                })
-                .UseStartup<Startup>();
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            var hostBuilder = WebHost.CreateDefaultBuilder(args).UseUrls("http://*:5000")
+                   .ConfigureLogging((ctx, builder) =>
+                   {
+                       builder.AddConfiguration(ctx.Configuration);
+                       builder.AddConsole();
+                   })
+                   .UseStartup<Startup>();
+            return hostBuilder;
+        }
     }
 }

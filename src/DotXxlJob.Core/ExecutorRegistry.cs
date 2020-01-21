@@ -34,7 +34,7 @@ namespace DotXxlJob.Core
         public async Task RegistryAsync(CancellationToken cancellationToken)
         {
             var registryParam = new RegistryParam {
-                registryGroup = "EXECUTOR",
+                registGroup = "EXECUTOR",
                 registryKey = _options.AppName,
                 registryValue = $"{_options.SpecialBindAddress}:{_options.Port}"
             };
@@ -55,6 +55,8 @@ namespace DotXxlJob.Core
                 catch (TaskCanceledException)
                 {
                     _logger.LogInformation(">>>>> Application Stopping....<<<<<");
+                    await _adminClient.RegistryRemove(registryParam);
+                    _logger.LogInformation(">>>>> Application Stopped....<<<<<");
                 }
                 catch (Exception ex)
                 {

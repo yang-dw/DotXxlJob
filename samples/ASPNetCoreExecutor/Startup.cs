@@ -25,7 +25,9 @@ namespace ASPNetCoreExecutor
             services.AddDefaultXxlJobHandlers();// add httpHandler;
 
             services.AddSingleton<IJobHandler, DemoJobHandler>(); // 添加自定义的jobHandler
+            services.AddSingleton<IJobHandler, DemoJobHandler2>(); // 添加自定义的jobHandler
             
+
             services.AddAutoRegistry(); // 自动注册
         }
 
@@ -38,7 +40,7 @@ namespace ASPNetCoreExecutor
             }
 
             //启用XxlExecutor
-            app.UseXxlJobExecutor();
+            app.UseMiddleware<XxlJobExecutorMiddleware>();
         }
     }
 }

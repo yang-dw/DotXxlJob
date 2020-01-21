@@ -5,7 +5,7 @@ using DotXxlJob.Core.Model;
 
 namespace DotXxlJob.Core
 {
-    public abstract class AbstractJobHandler:IJobHandler
+    public abstract class AbstractJobHandler:IJobHandler        
     {
         /// <summary>
         /// 
